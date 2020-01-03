@@ -1,14 +1,11 @@
 import torch
 import torch.nn as nn
-from a3c.utils import  push_and_pull, record
-import torch.nn.functional as F
+from a3c.utils import push_and_pull, record
 import torch.multiprocessing as mp
 from a3c.shared_adam import SharedAdam
 import gym
-import math, os
+import os
 from a3c.nets import MyNet
-from torch.distributions import Categorical
-import numpy as np
 from a3c.config import args
 
 # 只使用一个线程
@@ -69,12 +66,12 @@ class Trainer(mp.Process):
                         break
                 state = next_state
                 total_step += 1
-            torch.save(self.global_net.state_dict(), self.net_path)
+            # torch.save(self.global_net.state_dict(), self.net_path)
         self.res_queue.put(None)
 
 
 if __name__ == '__main__':
-    net_path = 'models/net.pth'
+    net_path = 'models/net1.pth'
     global_net = MyNet(args.state_dim, args.action_dim)  # global network
     if os.path.exists(net_path):
         global_net.load_state_dict(torch.load(net_path))
