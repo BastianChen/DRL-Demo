@@ -53,9 +53,9 @@ class Trainer:
         self.critic = Critic(state_dim, action_dim).to(self.device)
         self.critic_target = Critic(state_dim, action_dim).to(self.device)
 
-        if os.path.exists('models1/actor3.pth'):
-            self.actor.load_state_dict(torch.load('models1/actor3.pth'))
-            self.critic.load_state_dict(torch.load('models1/critic3.pth'))
+        if os.path.exists('models/actor1.pth'):
+            self.actor.load_state_dict(torch.load('models/actor1.pth'))
+            self.critic.load_state_dict(torch.load('models/critic1.pth'))
 
         self.actor_target.load_state_dict(self.actor.state_dict())
         self.actor_optimizer = torch.optim.Adam(self.actor.parameters())
@@ -64,8 +64,12 @@ class Trainer:
         self.mseloss = nn.MSELoss()
         self.action_dim = action_dim
         self.replay_memory = deque(maxlen=args.buffer_size)
-        # self.replay_memory = Replay_buffer()
         self.writer = SummaryWriter()
+
+    def weight_init(self, net):
+        if isinstance(net, nn.Linear):
+            nn.init.normal_(net.weight)
+            nn.init.constant_(net.bias, 0)
 
     def select_action(self, state):
         state = torch.Tensor(state).to(self.device)
@@ -91,8 +95,6 @@ class Trainer:
                 if done or t >= args.max_length_of_trajectory:
                     self.writer.add_scalar('ep_reward', ep_reward / t, global_step=i)
                     print("Ep_i \t{}, the ep_reward is \t{:0.2f}, the step is \t{}".format(i, ep_reward / t, t))
-                    # if i % 5== 0:
-                    #     print("Ep_i \t{}, the ep_r is \t{:0.2f}, the step is \t{}".format(i, ep_r, t))
                     ep_reward = 0
                     break
             if len(self.replay_memory) >= args.buffer_size - 1:
@@ -103,13 +105,6 @@ class Trainer:
                         state_batch).to(self.device), torch.FloatTensor(next_state_batch).to(
                         self.device), torch.FloatTensor(action_batch).to(self.device), torch.FloatTensor(
                         reward_batch).to(self.device), torch.FloatTensor(done_batch).to(self.device)
-
-                    # x, y, u, r, d = self.replay_memory.sample(args.batch_size)
-                    # state_batch = torch.FloatTensor(x).to(self.device)
-                    # action_batch = torch.FloatTensor(u).to(self.device)
-                    # next_state_batch = torch.FloatTensor(y).to(self.device)
-                    # done_batch = torch.FloatTensor(d).to(self.device)
-                    # reward_batch = torch.FloatTensor(r).to(self.device)
 
                     # 计算目标网络的估计Q值
                     target_Q = self.critic_target(next_state_batch, self.actor_target(next_state_batch))
@@ -140,8 +135,8 @@ class Trainer:
                         target_param.data.copy_(args.tau * param.data + (1 - args.tau) * target_param.data)
                     loss_update_index += 1
                     if i % 10 == 0:
-                        torch.save(self.actor.state_dict(), 'models1/actor3.pth')
-                        torch.save(self.critic.state_dict(), 'models1/critic3.pth')
+                        torch.save(self.actor.state_dict(), 'models/actor1.pth')
+                        torch.save(self.critic.state_dict(), 'models/critic1.pth')
 
 
 if __name__ == '__main__':

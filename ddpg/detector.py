@@ -22,7 +22,7 @@ if __name__ == '__main__':
     action_dim = env.action_space.shape[0]
     max_action = env.action_space.high[0]
     # detector = Detector('models1/actor.pth', state_dim, action_dim, max_action)
-    detector = Detector('models1/actor3.pth', state_dim, action_dim, max_action)
+    detector = Detector('models/actor1.pth', state_dim, action_dim, max_action)
     for i in range(10000):
         state = env.reset()
         ep_reward = 0
