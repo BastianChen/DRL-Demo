@@ -11,5 +11,4 @@ parser.add_argument('--exploration_noise', default=0.1, type=float,
 parser.add_argument('--max_length_of_trajectory', default=2000, type=int, help="每一轮的最大步数")
 parser.add_argument('--batch_size', default=10000, type=int, help="从样本池中取多少样本")
 parser.add_argument('--update_iteration', default=10, type=int)
-# parser.add_argument('--observe', default=4000, type=int, help="刚运行时随机采样的轮次")
 args = parser.parse_args()

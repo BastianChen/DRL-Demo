@@ -90,7 +90,6 @@ class Trainer:
                 ep_reward += reward
                 env.render()
                 self.replay_memory.append([state, next_state, action, reward, np.float(done)])
-                # self.replay_memory.push((state, next_state, action, reward, np.float(done)))
                 state = next_state
                 if done or t >= args.max_length_of_trajectory:
                     self.writer.add_scalar('ep_reward', ep_reward / t, global_step=i)
