@@ -56,7 +56,7 @@ class ACModel2:
             policy_losses = []
             critic_losses = []
             for (log_prob, value), reward in zip(self.net.actions, v_value):
-                advantage = reward - log_prob
+                advantage = reward - value.item()
                 policy_losses.append(-log_prob * advantage)
                 critic_losses.append(self.mseloss(value, reward))
 

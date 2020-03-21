@@ -1,6 +1,7 @@
 from torch import nn
 import torch
 import math
+from a3c.config import args
 
 
 class MyNet(nn.Module):
@@ -26,7 +27,7 @@ class MyNet(nn.Module):
 
     def forward(self, data):
         linear_layer = self.linear_layer(data)
-        mu = 2 * self.tanh(self.mu(linear_layer))
+        mu = args.max_action * self.tanh(self.mu(linear_layer))
         sigma = self.softplus(self.sigma(linear_layer)) + 0.001  # avoid 0
         value = self.value_layer(data)
         return mu, sigma, value
